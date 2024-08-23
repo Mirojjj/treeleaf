@@ -1,48 +1,128 @@
-// TableComponent.jsx
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUsersFromLocalStorage } from "../utils/helper.js";
 
-const UsersTable = ({ users, setUsers, onDeleteUser }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 5;
+import {
+  setUsers,
+  addUser,
+  deleteUser,
+  updateUser,
+  setSearchQuery,
+  setFilter,
+  setFilterType,
+  setSortConfig,
+} from "../features/user/userSlice.js";
 
-  // Pagination Logic
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+const UsersTable = () => {
+  const dispatch = useDispatch();
+  const { filteredUsers, searchQuery, filters, sortConfig } = useSelector(
+    (state) => state.user
+  );
 
-  console.log(users);
+  useEffect(() => {
+    const users = loadUsersFromLocalStorage();
+    if (users.length > 0) {
+      dispatch(setUsers(users));
+    }
+  }, [dispatch]);
+
+  const handleSearchChange = (e) => {
+    dispatch(setSearchQuery(e.target.value));
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(setFilter({ name, value }));
+  };
+
+  const handleFilterTypeChange = (e) => {
+    dispatch(setFilterType(e.target.value));
+  };
+
+  const handleSort = (key) => {
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    dispatch(setSortConfig({ key, direction }));
+  };
+
+  const handleAddUser = (userData) => {
+    dispatch(addUser(userData));
+  };
 
   const handleDelete = (index) => {
-    onDeleteUser(indexOfFirstUser + index);
+    dispatch(deleteUser(index));
   };
 
-  const handleEdit = (index) => {
-    const userToEdit = users[index];
-    // Implement edit functionality
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(users.length / usersPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const handleEdit = (index, userData) => {
+    dispatch(updateUser({ index, userData }));
   };
 
   return (
     <div>
-      <button onClick={() => sortByCity(users)}>sort</button>
+      {/* Filters and Search */}
+      <div>
+        <input
+          type="text"
+          placeholder="Search by name or email"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+
+        {/* Filter Type Selection */}
+        <select
+          name="filterType"
+          value={filters.type}
+          onChange={handleFilterTypeChange}
+        >
+          <option value="all">All</option>
+          <option value="city">City</option>
+          <option value="country">Country</option>
+          <option value="province">Province</option>
+        </select>
+
+        {/* Conditional Rendering of Filters Based on Filter Type */}
+        {filters.type === "city" && (
+          <select
+            name="city"
+            value={filters.city}
+            onChange={handleFilterChange}
+          >
+            <option value="">All Cities</option>
+            {/* Populate options dynamically */}
+          </select>
+        )}
+
+        {filters.type === "country" && (
+          <select
+            name="country"
+            value={filters.country}
+            onChange={handleFilterChange}
+          >
+            <option value="">All Countries</option>
+            {/* Populate options dynamically */}
+          </select>
+        )}
+
+        {filters.type === "province" && (
+          <select
+            name="province"
+            value={filters.province}
+            onChange={handleFilterChange}
+          >
+            <option value="">All Provinces</option>
+            {/* Populate options dynamically */}
+          </select>
+        )}
+      </div>
+
+      {/* Table */}
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
+            <th onClick={() => handleSort("name")}>Name</th>
+            <th onClick={() => handleSort("email")}>Email</th>
             <th>Phone Number</th>
-            <th>DOB</th>
+            <th onClick={() => handleSort("dob")}>DOB</th>
             <th>City</th>
             <th>District</th>
             <th>Province</th>
@@ -52,7 +132,7 @@ const UsersTable = ({ users, setUsers, onDeleteUser }) => {
           </tr>
         </thead>
         <tbody>
-          {currentUsers.map((user, index) => (
+          {filteredUsers.map((user, index) => (
             <tr key={index}>
               <td>{user.name}</td>
               <td>{user.email}</td>
@@ -64,24 +144,16 @@ const UsersTable = ({ users, setUsers, onDeleteUser }) => {
               <td>{user.country}</td>
               <td>{user.profilePicture}</td>
               <td>
-                <button onClick={() => handleEdit(index)}>Edit</button>
+                <button onClick={() => handleEdit(index, user)}>Edit</button>
                 <button onClick={() => handleDelete(index)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div>
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === Math.ceil(users.length / usersPerPage)}
-        >
-          Next
-        </button>
-      </div>
+
+      {/* Pagination */}
+      {/* Add pagination controls as needed */}
     </div>
   );
 };

@@ -306,7 +306,9 @@ const Form = ({ userId, userData, onClose, isEditing }) => {
                     />
                   ) : (
                     <span>
-                      {isLoading ? "Loading image..." : "Select Images"}
+                      {isLoading
+                        ? "Loading image..."
+                        : "Select Images (Only Png)"}
                     </span>
                   )}
                 </div>

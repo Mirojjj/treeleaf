@@ -6,9 +6,8 @@ import { useDispatch } from "react-redux";
 import { addUsers, editUser } from "../features/user/userSlice.js";
 import { convertToBase64 } from "../utils/helper.js";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid"; // Import uuid
 
-const Form = ({ userIndex, userData, onClose, isEditing }) => {
+const Form = ({ userId, userData, onClose, isEditing }) => {
   const dispatch = useDispatch();
 
   const initialInput = {
@@ -106,7 +105,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
         dispatch(addUsers(formData));
         toast.success("User Created Successfully!");
       } else {
-        dispatch(editUser({ index: userIndex, updatedUser: formData }));
+        dispatch(editUser({ id: userId, updatedUser: formData }));
         toast.success("User Updated Successfully!");
       }
 

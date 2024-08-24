@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, UsersTable } from "../components";
 import { useSelector } from "react-redux";
+import { scroller } from "react-scroll";
 
 const Homepage = () => {
   const users = useSelector((state) => state.users.users);
@@ -17,6 +18,10 @@ const Homepage = () => {
   };
 
   const handleCloseEditForm = () => {
+    scroller.scrollTo("usersTable", {
+      smooth: true,
+      offset: -50, // Adjust as needed
+    });
     setEditUserIndex(null);
     setSelectedUser(null);
     setIsEditing(false);

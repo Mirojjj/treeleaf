@@ -81,7 +81,7 @@ const UsersTable = ({ onEdit }) => {
                 />
               </td>
               <td>
-                <button onClick={handleEdit}>Edit</button>
+                <button onClick={() => handleEdit(index)}>Edit</button>
                 <button onClick={() => handleDelete(index)}>Delete</button>
               </td>
             </tr>

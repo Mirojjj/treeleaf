@@ -4,17 +4,22 @@ import { useSelector } from "react-redux";
 
 const Homepage = () => {
   const users = useSelector((state) => state.users.users);
+  const [isEditing, setIsEditing] = useState(false);
   const [editUserIndex, setEditUserIndex] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const handleEdit = (index) => {
+    // console.log(index);
+    // console.log(users[index]);
     setEditUserIndex(index);
-    setSelectedUser(user[index]);
+    setSelectedUser(users[index]);
+    setIsEditing(true);
   };
 
   const handleCloseEditForm = () => {
     setEditUserIndex(null);
     setSelectedUser(null);
+    setIsEditing(false);
   };
   return (
     <>
@@ -23,6 +28,7 @@ const Homepage = () => {
           userIndex={editUserIndex}
           userData={selectedUser}
           onClose={handleCloseEditForm}
+          isEditing={isEditing}
         />
         <UsersTable onEdit={handleEdit} />
       </div>

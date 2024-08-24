@@ -3,11 +3,11 @@ import axios from "axios";
 import { schema } from "../models/formDataSchema";
 import { ErrorLabel } from "../miscellaneous";
 import { useDispatch } from "react-redux";
-import { addUsers } from "../features/user/userSlice";
+import { addUsers, editUser } from "../features/user/userSlice.js";
 
-const Form = ({ userIndex, userData, onClose }) => {
+const Form = ({ userIndex, userData, onClose, isEditing }) => {
   const dispatch = useDispatch();
-  const isEdit = userIndex !== null && selectedUser;
+  console.log(isEditing);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -24,6 +24,24 @@ const Form = ({ userIndex, userData, onClose }) => {
   const provinceArray = [1, 2, 3, 4, 5, 6, 7];
   const [errors, setErrors] = useState({});
   const [allCountries, setAllCountries] = useState([]);
+
+  useEffect(() => {
+    if (isEditing) {
+      setFormData(userData);
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        dob: "",
+        city: "",
+        district: "",
+        province: "",
+        country: "Nepal",
+        profilePicture: "",
+      });
+    }
+  }, [userData, isEditing]);
 
   useEffect(() => {
     axios
@@ -76,7 +94,14 @@ const Form = ({ userIndex, userData, onClose }) => {
     e.preventDefault();
     try {
       schema.parse(formData);
-      dispatch(addUsers(formData));
+
+      if (!isEditing) {
+        dispatch(addUsers(formData));
+      } else {
+        dispatch(editUser({ index: userIndex, updatedUser: formData }));
+      }
+
+      console.log(isEditing);
       setFormData({
         name: "",
         email: "",
@@ -88,7 +113,11 @@ const Form = ({ userIndex, userData, onClose }) => {
         country: "Nepal",
         profilePicture: "",
       });
+      console.log("form reset");
+
+      console.log("onclosed called");
       setErrors({});
+      onClose();
     } catch (err) {
       console.log(err);
       const zodError = err.flatten().fieldErrors;
@@ -255,7 +284,7 @@ const Form = ({ userIndex, userData, onClose }) => {
           type="submit"
           className=" w-full bg-blue-400 p-4 mt-4 rounded-xl hover:bg-blue-500 transition-all text-white text-xl"
         >
-          Submit
+          {isEditing ? "Update" : "Submit"}
         </button>
       </form>
     </div>

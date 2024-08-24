@@ -31,8 +31,13 @@ const userSlice = createSlice({
 
     editUser: (state, action) => {
       const { index, updatedUser } = action.payload;
-      state.users[index] = updatedUser;
-      saveUsersToLocalStorage(state.users); // Save updated users to local storage
+
+      if (state.users[index]) {
+        state.users = state.users.map((user, i) =>
+          i === index ? updatedUser : user
+        );
+        saveUsersToLocalStorage(state.users); // Save updated users to local storage
+      } // Save updated users to local storage
     },
   },
 });

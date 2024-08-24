@@ -50,7 +50,10 @@ export const filterUsers = (users, filterOption) => {
   if (filterOption === "") {
     return users;
   }
-  return users.filter((user) => user.country === filterOption);
+  return users.filter(
+    (user) =>
+      user.province.toLowerCase().trim() === filterOption.toLowerCase().trim()
+  );
 };
 
 export const searchUsers = (users, searchQuery) => {

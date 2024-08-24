@@ -2,8 +2,13 @@ import { React, useState, useEffect } from "react";
 import axios from "axios";
 import { schema } from "../models/formDataSchema";
 import { ErrorLabel } from "../miscellaneous";
+import { useDispatch } from "react-redux";
+import { addUsers } from "../features/user/userSlice";
 
-const Form = ({ addUser }) => {
+const Form = ({ userIndex, userData, onClose }) => {
+  const dispatch = useDispatch();
+  const isEdit = userIndex !== null && selectedUser;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -71,7 +76,7 @@ const Form = ({ addUser }) => {
     e.preventDefault();
     try {
       schema.parse(formData);
-      addUser(formData);
+      dispatch(addUsers(formData));
       setFormData({
         name: "",
         email: "",
@@ -85,6 +90,7 @@ const Form = ({ addUser }) => {
       });
       setErrors({});
     } catch (err) {
+      console.log(err);
       const zodError = err.flatten().fieldErrors;
       setErrors(zodError);
     }

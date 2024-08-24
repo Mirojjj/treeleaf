@@ -7,13 +7,14 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import { Homepage, Notfound, Profilepage } from "./pages";
+import { Notfound, Profilepage } from "./pages";
 import { store } from "./app/store";
+import App from "./App";
 
 const router = Router([
   {
     path: "/",
-    element: <Homepage />,
+    element: <App />,
   },
   {
     path: "/profiles",

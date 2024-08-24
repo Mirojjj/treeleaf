@@ -8,3 +8,10 @@ export const loadUsersFromLocalStorage = () => {
 export const saveUsersToLocalStorage = (users) => {
   localStorage.setItem("users", JSON.stringify(users));
 };
+
+export const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};

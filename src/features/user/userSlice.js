@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 import {
   loadUsersFromLocalStorage,
   saveUsersToLocalStorage,
@@ -14,8 +15,9 @@ const userSlice = createSlice({
   reducers: {
     addUsers: (state, action) => {
       try {
-        console.log("adduser dispatched");
-        state.users.unshift(action.payload); // Add new user to state
+        const newUser = { ...action.payload, id: uuidv4() }; // Generate a unique ID
+        console.log(newUser);
+        state.users.unshift(newUser); // Add new user to state
         saveUsersToLocalStorage(state.users); // Save entire updated users array to local storage
       } catch (error) {
         console.error("Failed to add user:", error);
@@ -24,11 +26,11 @@ const userSlice = createSlice({
 
     deleteUser: (state, action) => {
       try {
-        console.log("dispatched delete fn", action.payload);
-        const userIdToDelete = action.payload; // Assuming action.payload contains the index of the user to delete
+        const userIdToDelete = action.payload; // Assuming action.payload contains the ID of the user to delete
+        console.log(userIdToDelete);
         const updatedUsers = state.users.filter(
-          (user, index) => index !== userIdToDelete
-        ); // Remove user by index
+          (user) => user.id !== userIdToDelete
+        ); // Remove user by ID
         state.users = updatedUsers;
         saveUsersToLocalStorage(state.users); // Save updated users to local storage
         console.log(state.users);
@@ -39,14 +41,12 @@ const userSlice = createSlice({
 
     editUser: (state, action) => {
       try {
-        const { index, updatedUser } = action.payload;
+        const { id, updatedUser } = action.payload;
 
-        if (state.users[index]) {
-          state.users = state.users.map((user, i) =>
-            i === index ? updatedUser : user
-          );
-          saveUsersToLocalStorage(state.users); // Save updated users to local storage
-        }
+        state.users = state.users.map((user) =>
+          user.id === id ? { ...user, ...updatedUser } : user
+        );
+        saveUsersToLocalStorage(state.users); // Save updated users to local storage
       } catch (error) {
         console.error("Failed to edit user:", error);
       }

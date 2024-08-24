@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { schema } from "../models/formDataSchema";
 import { ErrorLabel } from "../miscellaneous";
@@ -6,10 +6,10 @@ import { useDispatch } from "react-redux";
 import { addUsers, editUser } from "../features/user/userSlice.js";
 import { convertToBase64 } from "../utils/helper.js";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 
 const Form = ({ userIndex, userData, onClose, isEditing }) => {
   const dispatch = useDispatch();
-  // const fileInputRef = useRef(null);
 
   const initialInput = {
     name: "",
@@ -24,25 +24,25 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
   };
 
   const [formData, setFormData] = useState(initialInput);
-
-  const provinceArray = [1, 2, 3, 4, 5, 6, 7];
   const [errors, setErrors] = useState({});
   const [allCountries, setAllCountries] = useState([]);
   const [preview, setPreview] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const provinceArray = [1, 2, 3, 4, 5, 6, 7];
+
   useEffect(() => {
     if (isEditing) {
       setFormData(userData);
-      console.log(userData);
     } else {
       setFormData(initialInput);
     }
   }, [userData, isEditing]);
 
   useEffect(() => {
-    if (!formData.profilePicture) return;
-    setPreview(formData.profilePicture);
+    if (formData.profilePicture) {
+      setPreview(formData.profilePicture);
+    }
   }, [formData.profilePicture]);
 
   useEffect(() => {
@@ -79,11 +79,8 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
       try {
         setIsLoading(true);
         const base64String = await convertToBase64(file);
-
         setFormData({ ...formData, profilePicture: base64String });
-
         setIsLoading(false);
-        console.log("file handles");
         e.target.value = null;
       } catch (err) {
         if (err.name === "ZodError") {
@@ -105,6 +102,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
       schema.parse(formData);
 
       if (!isEditing) {
+        // const newUser = { ...formData, id: uuidv4() }; // Generate unique ID for new user
         dispatch(addUsers(formData));
         toast.success("User Created Successfully!");
       } else {
@@ -112,16 +110,8 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
         toast.success("User Updated Successfully!");
       }
 
-      console.log(isEditing);
-
-      // if (fileInputRef.current) {
-      //   fileInputRef.current.value = "";
-      // }
-
       setFormData(initialInput);
       setPreview("");
-
-      console.log("onclosed called");
       setErrors({});
       onClose();
     } catch (err) {
@@ -132,7 +122,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen w-full gap-7 p-4 ">
+    <div className="flex flex-col justify-center items-center min-h-screen w-full gap-7 p-4">
       <h1 className="text-3xl font-bold">User Form</h1>
       <form
         onSubmit={handleSubmit}
@@ -145,7 +135,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
           </legend>
           <div className="flex flex-col gap-4">
             <div className="w-full">
-              <label className="block font-medium">Name:</label>
+              <label className="block font-medium">
+                Name<span className="text-red-500">*</span>
+              </label>
               <input
                 className="w-full border rounded-xl py-2 px-4 mt-1"
                 type="text"
@@ -159,7 +151,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
             </div>
 
             <div className="w-full">
-              <label className="block font-medium">Email:</label>
+              <label className="block font-medium">
+                Email<span className="text-red-500">*</span>
+              </label>
               <input
                 className="w-full border rounded-xl py-2 px-4 mt-1"
                 type="text"
@@ -174,7 +168,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
 
             <div className="flex gap-4">
               <div className="w-1/2">
-                <label className="block font-medium">Phone Number:</label>
+                <label className="block font-medium">
+                  Phone Number<span className="text-red-500">*</span>
+                </label>
                 <input
                   className="w-full border rounded-xl py-2 px-4 mt-1"
                   type="number"
@@ -189,7 +185,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
                 )}
               </div>
               <div className="w-1/2">
-                <label className="block font-medium">DOB:</label>
+                <label className="block font-medium">
+                  DOB<span className="text-red-500">*</span>
+                </label>
                 <input
                   className="w-full border rounded-xl py-2 px-4 mt-1"
                   type="date"
@@ -215,7 +213,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <div className="w-1/3">
-                <label className="block font-medium">City:</label>
+                <label className="block font-medium">
+                  City<span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   id="city"
@@ -228,7 +228,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
               </div>
 
               <div className="w-1/3">
-                <label className="block font-medium">District:</label>
+                <label className="block font-medium">
+                  District<span className="text-red-500">*</span>
+                </label>
                 <input
                   className="w-full border rounded-xl py-2 px-4 mt-1"
                   type="text"
@@ -241,7 +243,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
               </div>
 
               <div className="w-1/3">
-                <label className="block font-medium">Province:</label>
+                <label className="block font-medium">
+                  Province<span className="text-red-500">*</span>
+                </label>
                 <select
                   className="w-full border rounded-xl py-2 px-4 mt-1"
                   id="province"
@@ -261,7 +265,9 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
             </div>
 
             <div className="w-full">
-              <label className="block font-medium">Country:</label>
+              <label className="block font-medium">
+                Country<span className="text-red-500">*</span>
+              </label>
               <select
                 className="w-full border rounded-xl py-2 px-4 mt-1"
                 id="country"
@@ -283,7 +289,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
         {/* Profile Picture Section */}
         <fieldset className="w-full">
           <legend className="text-lg font-semibold mb-2">
-            Profile Picture
+            Profile Picture<span className="text-red-500">*</span>
           </legend>
           <div className="flex flex-col gap-4">
             <div className="w-full">

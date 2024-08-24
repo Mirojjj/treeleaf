@@ -80,13 +80,13 @@ const Tables = ({ users, handleDelete, handleEdit, isProfile }) => {
             ) : (
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
-                  onClick={() => handleEdit(index)}
+                  onClick={() => handleEdit(user.id)}
                   className="text-blue-600 hover:text-blue-900 mr-2 border border-blue-900 py-1 px-3 rounded-md"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(user.id)}
                   className="text-red-600 hover:text-red-900 border border-red-900 p-1 rounded-md"
                 >
                   Delete

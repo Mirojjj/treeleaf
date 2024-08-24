@@ -6,15 +6,17 @@ import { scroller } from "react-scroll";
 const Homepage = () => {
   const users = useSelector((state) => state.users.users);
   const [isEditing, setIsEditing] = useState(false);
-  const [editUserIndex, setEditUserIndex] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const handleEdit = (index) => {
-    // console.log(index);
-    // console.log(users[index]);
-    setEditUserIndex(index);
-    setSelectedUser(users[index]);
-    setIsEditing(true);
+  const handleEdit = (userId) => {
+    // Find the user with the given userId
+    const user = users.find((user) => user.id === userId);
+    if (user) {
+      setSelectedUserId(userId);
+      setSelectedUser(user);
+      setIsEditing(true);
+    }
   };
 
   const handleCloseEditForm = () => {
@@ -22,15 +24,16 @@ const Homepage = () => {
       smooth: true,
       offset: -50, // Adjust as needed
     });
-    setEditUserIndex(null);
+    setSelectedUserId(null);
     setSelectedUser(null);
     setIsEditing(false);
   };
+
   return (
     <>
-      <div className=" mx-auto w-[85%]">
+      <div className="mx-auto w-[85%]">
         <Form
-          userIndex={editUserIndex}
+          userId={selectedUserId}
           userData={selectedUser}
           onClose={handleCloseEditForm}
           isEditing={isEditing}

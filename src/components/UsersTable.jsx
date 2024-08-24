@@ -35,13 +35,21 @@ const UsersTable = ({ onEdit }) => {
     try {
       dispatch(deleteUser(userId));
       toast.success("User Deleted Successfully");
-      // Adjust pagination if necessary
-      if (
-        filteredAndSortedUsers.length - 1 <=
-        (currentPage - 1) * rowsPerPage
-      ) {
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
+
+      // Check if the deleted user was the last one for the current filter
+      if (filteredUsers.length === 1) {
+        // Reset filter and pagination if there are no more users for the current filter
+        setFilterOption("");
+        setCurrentPage(1);
+      } else {
+        // Adjust pagination if necessary
+        if (
+          filteredAndSortedUsers.length - 1 <=
+          (currentPage - 1) * rowsPerPage
+        ) {
+          if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+          }
         }
       }
     } catch (error) {
@@ -67,6 +75,12 @@ const UsersTable = ({ onEdit }) => {
     }
   };
 
+  // Determine if there are no users at all
+  const hasNoUsers = users.length === 0;
+
+  // Determine if there are filtered users
+  const hasFilteredUsers = filteredAndSortedUsers.length > 0;
+
   return (
     <Element name="usersTable" className="user-table">
       <div className="container mx-auto p-4 h-screen flex flex-col justify-center">
@@ -74,107 +88,120 @@ const UsersTable = ({ onEdit }) => {
           Users List
         </h1>
 
-        {paginatedUsers.length > 0 ? (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              {/* Search Input */}
-              <input
-                type="text"
-                className="border py-1 px-3 rounded-xl min-w-72"
-                placeholder="Search by name or email"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-
-              {/* Sorting */}
-              <div className="flex items-center gap-2">
-                <p className="text-gray-500">Sort by:</p>
-                <select
-                  className="border py-1 px-3 rounded-xl"
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                >
-                  <option value="">None</option>
-                  <option value="Name">Name</option>
-                  <option value="DOB">DOB</option>
-                </select>
-              </div>
-
-              {/* Filtering by country */}
-              <div className="flex items-center gap-2">
-                <p className="text-gray-500">Filter by Country:</p>
-                <select
-                  className="border py-1 px-3 rounded-xl"
-                  value={filterOption}
-                  onChange={(e) => setFilterOption(e.target.value)}
-                >
-                  <option value="">All</option>
-                  <option value="Nepal">Nepal</option>
-                  <option value="India">India</option>
-                  <option value="China">China</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto shadow-lg rounded-xl">
-              <Tables
-                users={paginatedUsers}
-                handleDelete={handleDelete}
-                handleEdit={handleEdit}
-                isProfile={false}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="flex min-w-full min-h-60 justify-center items-center">
-            Please Add Users from the form
-          </div>
-        )}
-
-        {/* Pagination Controls */}
-        {totalUsers > rowsPerPage && (
-          <div className="flex justify-between items-center mt-4">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className={`px-4 py-2 text-white rounded-lg ${
-                currentPage === 1
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }`}
-            >
-              Previous Page
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={endIndex >= totalUsers}
-              className={`px-4 py-2 text-white rounded-lg ${
-                endIndex >= totalUsers
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }`}
-            >
-              Next Page
-            </button>
-          </div>
-        )}
-        {paginatedUsers.length > 0 ? (
-          <div className="flex justify-center">
-            <button
-              onClick={() => navigate("/profiles")}
-              className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white mt-8"
-            >
-              See All Profiles
-            </button>
-          </div>
-        ) : (
-          <div className="flex justify-center">
+        {hasNoUsers ? (
+          <div className="flex flex-col min-w-full min-h-60 justify-center items-center">
+            <p className="text-gray-500">Please add users from the form.</p>
             <button
               onClick={scrollToTop}
-              className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white mt-8"
+              className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white mt-4"
             >
               Add User
             </button>
+          </div>
+        ) : (
+          <div>
+            {hasFilteredUsers ? (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    className="border py-1 px-3 rounded-xl min-w-72"
+                    placeholder="Search by name or email"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+
+                  {/* Sorting */}
+                  <div className="flex items-center gap-2">
+                    <p className="text-gray-500">Sort by:</p>
+                    <select
+                      className="border py-1 px-3 rounded-xl"
+                      value={sortOption}
+                      onChange={(e) => setSortOption(e.target.value)}
+                    >
+                      <option value="">None</option>
+                      <option value="Name">Name</option>
+                      <option value="DOB">DOB</option>
+                    </select>
+                  </div>
+
+                  {/* Filtering by country */}
+                  <div className="flex items-center gap-2">
+                    <p className="text-gray-500">Filter by Country:</p>
+                    <select
+                      className="border py-1 px-3 rounded-xl"
+                      value={filterOption}
+                      onChange={(e) => setFilterOption(e.target.value)}
+                    >
+                      <option value="">All</option>
+                      <option value="Nepal">Nepal</option>
+                      <option value="India">India</option>
+                      <option value="China">China</option>
+                    </select>
+                  </div>
+                </div>
+
+                {paginatedUsers.length > 0 ? (
+                  <div className="overflow-x-auto shadow-lg rounded-xl">
+                    <Tables
+                      users={paginatedUsers}
+                      handleDelete={handleDelete}
+                      handleEdit={handleEdit}
+                      isProfile={false}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center text-gray-500">
+                    No data available for the selected filter.
+                  </div>
+                )}
+
+                {/* Pagination Controls */}
+                {totalUsers > rowsPerPage && (
+                  <div className="flex justify-between items-center mt-4">
+                    <button
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      className={`px-4 py-2 text-white rounded-lg ${
+                        currentPage === 1
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    >
+                      Previous Page
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={endIndex >= totalUsers}
+                      className={`px-4 py-2 text-white rounded-lg ${
+                        endIndex >= totalUsers
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 hover:bg-blue-600"
+                      }`}
+                    >
+                      Next Page
+                    </button>
+                  </div>
+                )}
+
+                {/* Show "See All Users" button if there are users */}
+                {users.length > 0 && (
+                  <div className="flex justify-center mt-8">
+                    <button
+                      onClick={() => navigate("/profiles")}
+                      className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white"
+                    >
+                      See All Users
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500">
+                No data available for the selected filter.
+              </div>
+            )}
           </div>
         )}
       </div>

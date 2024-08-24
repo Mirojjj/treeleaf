@@ -19,6 +19,7 @@
     "react-router-dom": "^6.26.1",
     "react-scroll": "^1.9.0",
     "react-toastify": "^10.0.5",
+    "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

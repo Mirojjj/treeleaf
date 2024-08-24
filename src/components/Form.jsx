@@ -4,9 +4,11 @@ import { schema } from "../models/formDataSchema";
 import { ErrorLabel } from "../miscellaneous";
 import { useDispatch } from "react-redux";
 import { addUsers, editUser } from "../features/user/userSlice.js";
+import { convertToBase64 } from "../utils/helper.js";
 
 const Form = ({ userIndex, userData, onClose, isEditing }) => {
   const dispatch = useDispatch();
+
   console.log(isEditing);
 
   const [formData, setFormData] = useState({
@@ -28,6 +30,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
   useEffect(() => {
     if (isEditing) {
       setFormData(userData);
+      console.log(userData);
     } else {
       setFormData({
         name: "",
@@ -70,22 +73,33 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const fileName = file.name;
-      setFormData({ ...formData, profilePicture: fileName });
-
       // File validation
+      // const fileName = file.name;
+      // console.log(fileName);
+      // setFormData({ ...formData, file: fileName });
+
       try {
-        schema.parse({ ...formData, profilePicture: fileName });
+        const base64String = await convertToBase64(file);
+        // console.log(base64String);
+        // Update form data with Base64 string
+        setFormData({ ...formData, profilePicture: base64String });
+
+        // Validate the updated form data
+        schema.parse({ ...formData, profilePicture: base64String });
         setErrors({ ...errors, profilePicture: "" });
       } catch (err) {
-        const zodError = err.flatten().fieldErrors;
-        setErrors({
-          ...errors,
-          profilePicture: zodError.profilePicture?.[0] || "",
-        });
+        if (err.name === "ZodError") {
+          const zodError = err.flatten().fieldErrors;
+          setErrors({
+            ...errors,
+            profilePicture: zodError.profilePicture?.[0] || "",
+          });
+        } else {
+          console.error("Error converting file to Base64:", err);
+        }
       }
     }
   };
@@ -160,7 +174,7 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter Your Email"
-          />
+          />{" "}
           {errors.email && <ErrorLabel>{errors.email}</ErrorLabel>}
         </div>
 
@@ -266,7 +280,8 @@ const Form = ({ userIndex, userData, onClose, isEditing }) => {
           <div className="min-w-[48%]">
             <label htmlFor="profilePicture">Profile Picture (PNG only):</label>
             <input
-              className="w-full border rounded-xl py-1 px-4 mt-2"
+              title="enter your file"
+              className="  w-full border rounded-xl py-1 px-4 mt-2"
               type="file"
               id="profilePicture"
               name="profilePicture"

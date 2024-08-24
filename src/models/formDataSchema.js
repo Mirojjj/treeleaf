@@ -14,5 +14,9 @@ export const schema = z.object({
   profilePicture: z
     .string()
     .min(1, "Profile picture is required")
-    .refine((file) => file.endsWith(".png"), "Only PNG files are allowed"),
+    .refine(
+      (file) =>
+        file.endsWith(".png") || file.startsWith("data:image/png;base64,"),
+      "Only PNG files are allowed"
+    ),
 });

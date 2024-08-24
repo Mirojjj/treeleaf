@@ -86,14 +86,14 @@ const UsersTable = ({ onEdit }) => {
 
   return (
     <Element name="usersTable" className="user-table">
-      <div className="container mx-auto p-4 h-screen flex flex-col ">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8 mt-11">
+      <div className="container mx-auto p-4 h-screen flex flex-col">
+        <h1 className="text-2xl font-extrabold text-center text-gray-800 mb-6 mt-8 sm:text-4xl sm:mb-8 sm:mt-11">
           Users List
         </h1>
 
-        <div className=" p-5 min-h-[300px]">
+        <div className="p-4 min-h-[300px] sm:p-5">
           {hasNoUsers ? (
-            <div className="flex flex-col min-w-full min-h-60 justify-center items-center">
+            <div className="flex flex-col justify-center items-center text-center">
               <p className="text-gray-500">Please add users from the form.</p>
               <button
                 onClick={scrollToTop}
@@ -104,18 +104,18 @@ const UsersTable = ({ onEdit }) => {
             </div>
           ) : (
             <div>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-4">
                 {/* Search Input */}
                 <input
                   type="text"
-                  className="border py-1 px-3 rounded-xl min-w-72"
+                  className="border py-1 px-3 rounded-xl w-full sm:w-1/3"
                   placeholder="Search by name or email"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
                 {/* Sorting */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <p className="text-gray-500">Sort by:</p>
                   <select
                     className="border py-1 px-3 rounded-xl"
@@ -129,7 +129,7 @@ const UsersTable = ({ onEdit }) => {
                 </div>
 
                 {/* Filtering by province */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <p className="text-gray-500">Filter by Province:</p>
                   <select
                     className="border py-1 px-3 rounded-xl"

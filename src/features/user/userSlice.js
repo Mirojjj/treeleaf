@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid"; // Import uuid
+import { v4 as uuidv4 } from "uuid";
 import {
   loadUsersFromLocalStorage,
   saveUsersToLocalStorage,
 } from "../../utils/helper.js";
 
 const initialState = {
-  users: loadUsersFromLocalStorage(), // Initialize from localStorage or as empty array
+  users: loadUsersFromLocalStorage(),
 };
 
 const userSlice = createSlice({
@@ -15,10 +15,10 @@ const userSlice = createSlice({
   reducers: {
     addUsers: (state, action) => {
       try {
-        const newUser = { ...action.payload, id: uuidv4() }; // Generate a unique ID
+        const newUser = { ...action.payload, id: uuidv4() };
         console.log(newUser);
-        state.users.unshift(newUser); // Add new user to state
-        saveUsersToLocalStorage(state.users); // Save entire updated users array to local storage
+        state.users.unshift(newUser);
+        saveUsersToLocalStorage(state.users);
       } catch (error) {
         console.error("Failed to add user:", error);
       }
@@ -26,13 +26,13 @@ const userSlice = createSlice({
 
     deleteUser: (state, action) => {
       try {
-        const userIdToDelete = action.payload; // Assuming action.payload contains the ID of the user to delete
+        const userIdToDelete = action.payload;
         console.log(userIdToDelete);
         const updatedUsers = state.users.filter(
           (user) => user.id !== userIdToDelete
         ); // Remove user by ID
         state.users = updatedUsers;
-        saveUsersToLocalStorage(state.users); // Save updated users to local storage
+        saveUsersToLocalStorage(state.users);
         console.log(state.users);
       } catch (error) {
         console.error("Failed to delete user:", error);
@@ -46,7 +46,7 @@ const userSlice = createSlice({
         state.users = state.users.map((user) =>
           user.id === id ? { ...user, ...updatedUser } : user
         );
-        saveUsersToLocalStorage(state.users); // Save updated users to local storage
+        saveUsersToLocalStorage(state.users);
       } catch (error) {
         console.error("Failed to edit user:", error);
       }

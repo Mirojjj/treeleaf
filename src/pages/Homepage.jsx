@@ -10,7 +10,6 @@ const Homepage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const handleEdit = (userId) => {
-    // Find the user with the given userId
     const user = users.find((user) => user.id === userId);
     if (user) {
       setSelectedUserId(userId);
@@ -22,7 +21,7 @@ const Homepage = () => {
   const handleCloseEditForm = () => {
     scroller.scrollTo("usersTable", {
       smooth: true,
-      offset: -50, // Adjust as needed
+      offset: -50,
     });
     setSelectedUserId(null);
     setSelectedUser(null);

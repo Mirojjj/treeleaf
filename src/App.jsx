@@ -11,7 +11,6 @@ const App = () => {
     const hasVisited = localStorage.getItem("hasVisited");
 
     if (!hasVisited) {
-      // Show loader on first visit
       const timer = setTimeout(() => {
         setIsLoading(false);
         localStorage.setItem("hasVisited", "true");
@@ -19,7 +18,6 @@ const App = () => {
 
       return () => clearTimeout(timer);
     } else {
-      // Skip loader on subsequent visits
       setIsLoading(false);
     }
   }, []);

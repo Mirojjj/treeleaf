@@ -81,129 +81,138 @@ const UsersTable = ({ onEdit }) => {
   // Determine if there are filtered users
   const hasFilteredUsers = filteredAndSortedUsers.length > 0;
 
+  // Determine if there are users in the entire dataset (regardless of filtering)
+  const hasAnyUsers = users.length > 0;
+
   return (
     <Element name="usersTable" className="user-table">
-      <div className="container mx-auto p-4 h-screen flex flex-col justify-center">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
+      <div className="container mx-auto p-4 h-screen flex flex-col ">
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8 mt-11">
           Users List
         </h1>
 
-        {hasNoUsers ? (
-          <div className="flex flex-col min-w-full min-h-60 justify-center items-center">
-            <p className="text-gray-500">Please add users from the form.</p>
-            <button
-              onClick={scrollToTop}
-              className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white mt-4"
-            >
-              Add User
-            </button>
-          </div>
-        ) : (
-          <div>
-            {hasFilteredUsers ? (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  {/* Search Input */}
-                  <input
-                    type="text"
-                    className="border py-1 px-3 rounded-xl min-w-72"
-                    placeholder="Search by name or email"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+        <div className=" p-5 min-h-[300px]">
+          {hasNoUsers ? (
+            <div className="flex flex-col min-w-full min-h-60 justify-center items-center">
+              <p className="text-gray-500">Please add users from the form.</p>
+              <button
+                onClick={scrollToTop}
+                className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white mt-4"
+              >
+                Add User
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                {/* Search Input */}
+                <input
+                  type="text"
+                  className="border py-1 px-3 rounded-xl min-w-72"
+                  placeholder="Search by name or email"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
 
-                  {/* Sorting */}
-                  <div className="flex items-center gap-2">
-                    <p className="text-gray-500">Sort by:</p>
-                    <select
-                      className="border py-1 px-3 rounded-xl"
-                      value={sortOption}
-                      onChange={(e) => setSortOption(e.target.value)}
-                    >
-                      <option value="">None</option>
-                      <option value="Name">Name</option>
-                      <option value="DOB">DOB</option>
-                    </select>
-                  </div>
-
-                  {/* Filtering by country */}
-                  <div className="flex items-center gap-2">
-                    <p className="text-gray-500">Filter by Country:</p>
-                    <select
-                      className="border py-1 px-3 rounded-xl"
-                      value={filterOption}
-                      onChange={(e) => setFilterOption(e.target.value)}
-                    >
-                      <option value="">All</option>
-                      <option value="Nepal">Nepal</option>
-                      <option value="India">India</option>
-                      <option value="China">China</option>
-                    </select>
-                  </div>
+                {/* Sorting */}
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500">Sort by:</p>
+                  <select
+                    className="border py-1 px-3 rounded-xl"
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                  >
+                    <option value="">None</option>
+                    <option value="Name">Name</option>
+                    <option value="DOB">DOB</option>
+                  </select>
                 </div>
 
-                {paginatedUsers.length > 0 ? (
-                  <div className="overflow-x-auto shadow-lg rounded-xl">
-                    <Tables
-                      users={paginatedUsers}
-                      handleDelete={handleDelete}
-                      handleEdit={handleEdit}
-                      isProfile={false}
-                    />
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500">
-                    No data available for the selected filter.
-                  </div>
-                )}
-
-                {/* Pagination Controls */}
-                {totalUsers > rowsPerPage && (
-                  <div className="flex justify-between items-center mt-4">
-                    <button
-                      onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
-                      className={`px-4 py-2 text-white rounded-lg ${
-                        currentPage === 1
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    >
-                      Previous Page
-                    </button>
-                    <button
-                      onClick={handleNextPage}
-                      disabled={endIndex >= totalUsers}
-                      className={`px-4 py-2 text-white rounded-lg ${
-                        endIndex >= totalUsers
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                    >
-                      Next Page
-                    </button>
-                  </div>
-                )}
-
-                {/* Show "See All Users" button if there are users */}
-                {users.length > 0 && (
-                  <div className="flex justify-center mt-8">
-                    <button
-                      onClick={() => navigate("/profiles")}
-                      className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white"
-                    >
-                      See All Users
-                    </button>
-                  </div>
-                )}
+                {/* Filtering by province */}
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-500">Filter by Province:</p>
+                  <select
+                    className="border py-1 px-3 rounded-xl"
+                    value={filterOption}
+                    onChange={(e) => setFilterOption(e.target.value)}
+                  >
+                    <option value="">All</option>
+                    <option value="Province 1">Province 1</option>
+                    <option value="Province 2">Province 2</option>
+                    <option value="Province 3">Province 3</option>
+                    <option value="Province 4">Province 4</option>
+                    <option value="Province 5">Province 5</option>
+                    <option value="Province 6">Province 6</option>
+                    <option value="Province 7">Province 7</option>
+                  </select>
+                </div>
               </div>
-            ) : (
-              <div className="text-center text-gray-500">
-                No data available for the selected filter.
-              </div>
-            )}
-          </div>
-        )}
+
+              {hasFilteredUsers ? (
+                <div>
+                  {paginatedUsers.length > 0 ? (
+                    <div className="overflow-x-auto shadow-lg rounded-xl">
+                      <Tables
+                        users={paginatedUsers}
+                        handleDelete={handleDelete}
+                        handleEdit={handleEdit}
+                        isProfile={false}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500">
+                      No data available for the selected filter.
+                    </div>
+                  )}
+
+                  {/* Pagination Controls */}
+                  {totalUsers > rowsPerPage && (
+                    <div className="flex justify-between items-center mt-4">
+                      <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className={`px-4 py-2 text-white rounded-lg ${
+                          currentPage === 1
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-blue-500 hover:bg-blue-600"
+                        }`}
+                      >
+                        Previous Page
+                      </button>
+                      <button
+                        onClick={handleNextPage}
+                        disabled={endIndex >= totalUsers}
+                        className={`px-4 py-2 text-white rounded-lg ${
+                          endIndex >= totalUsers
+                            ? "bg-gray-400 cursor-not-allowed"
+                            : "bg-blue-500 hover:bg-blue-600"
+                        }`}
+                      >
+                        Next Page
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500">
+                  No data available for the selected filter.
+                </div>
+              )}
+
+              {/* Show "See All Users" button if there are users */}
+              {hasAnyUsers && (
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={() => navigate("/profiles")}
+                    className="bg-blue-500 hover:bg-blue-600 rounded-lg px-4 py-2 text-white"
+                  >
+                    See All Users
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </Element>
   );

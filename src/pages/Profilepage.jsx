@@ -55,9 +55,13 @@ const Profilepage = () => {
                 onChange={(e) => setFilterOption(e.target.value)}
               >
                 <option value="">All</option>
-                <option value="Nepal">Nepal</option>
-                <option value="India">India</option>
-                <option value="China">China</option>
+                <option value="Province 1">Province 1</option>
+                <option value="Province 2">Province 2</option>
+                <option value="Province 3">Province 3</option>
+                <option value="Province 4">Province 4</option>
+                <option value="Province 5">Province 5</option>
+                <option value="Province 6">Province 6</option>
+                <option value="Province 7">Province 7</option>
               </select>
             </div>
           </div>

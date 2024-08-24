@@ -2,21 +2,18 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { scrollToTop } from "../utils/helper.js";
 import { deleteUser } from "../features/user/userSlice.js";
+import { useNavigate } from "react-router-dom";
+import Tables from "./Tables.jsx";
 import { Element } from "react-scroll";
-
-// import { addUs} from "../features/user/userSlice.js";
 
 const UsersTable = ({ onEdit }) => {
   const dispatch = useDispatch();
-  const [savedUsers, setSavedUsers] = useState([]);
-  // const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   const users = useSelector((state) => state.users.users);
-  // console.log(loadUsersFromLocalStorage());
 
   const handleDelete = (index) => {
-    const userIndex = startIndex + index;
-    dispatch(deleteUser(startIndex + index)); // Dispatch deleteUser action with user index
+    dispatch(deleteUser(startIndex + index));
     if (users.length - 1 <= (currentPage - 1) * rowsPerPage) {
       if (currentPage > 1) {
         setCurrentPage(currentPage - 1);
@@ -43,7 +40,6 @@ const UsersTable = ({ onEdit }) => {
   console.log({ usersLength });
 
   const totalUsers = users.length;
-  const totalPages = Math.ceil(totalUsers / rowsPerPage);
 
   // Handle page change
   const handleNextPage = () => {
@@ -60,96 +56,17 @@ const UsersTable = ({ onEdit }) => {
 
   return (
     <Element name="usersTable" className="user-table">
-      <div className="container mx-auto p-4  h-screen ">
-        <h1 className="text-2xl text-center mb-6">Users List</h1>
+      <div className="container mx-auto p-4  h-screen flex flex-col justify-center">
+        <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
+          Users List
+        </h1>
         <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full divide-y divide-gray-200 ">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone Number
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date of Birth
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  City
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  District
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Province
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Country
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Profile Picture
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedUsers.map((user, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {user.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.phoneNumber}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.dob}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.city}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.district}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.province}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.country}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex justify-center">
-                    <img
-                      src={user.profilePicture}
-                      alt={`${user.name}'s Profile`}
-                      className="w-12 h-12 object-cover rounded-full"
-                    />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(index)}
-                      className="text-blue-600 hover:text-blue-900 mr-2 border border-blue-900 py-1 px-3"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(index)}
-                      className="text-red-600 hover:text-red-900 border border-red-900 p-1"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <Tables
+            users={paginatedUsers}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+            isProfile={false}
+          />
         </div>
 
         {totalUsers > rowsPerPage && (
@@ -178,6 +95,14 @@ const UsersTable = ({ onEdit }) => {
             </button>
           </div>
         )}
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate("/profiles")}
+            className="justify-center bg-blue-500 hover:bg-blue-600 max-w-fit rounded-lg px-4 py-2 text-white mt-8"
+          >
+            See All Profiles
+          </button>
+        </div>
       </div>
     </Element>
   );

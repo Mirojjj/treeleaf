@@ -15,3 +15,19 @@ export const scrollToTop = () => {
     behavior: "smooth",
   });
 };
+
+export const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file); // Convert the file to a Base64-encoded string
+
+    reader.onload = () => {
+      resolve(reader.result); // Resolve the promise with the Base64 string
+    };
+
+    reader.onerror = (error) => {
+      reject(error); // Reject the promise if an error occurs during file reading
+    };
+  });
+};

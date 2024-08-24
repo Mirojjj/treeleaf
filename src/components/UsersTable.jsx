@@ -5,6 +5,9 @@ import { deleteUser } from "../features/user/userSlice.js";
 import { useNavigate } from "react-router-dom";
 import Tables from "./Tables.jsx";
 import { Element } from "react-scroll";
+import { toast } from "react-toastify";
+
+import { sortUsers, filterUsers, searchUsers } from "../utils/helper.js";
 
 const UsersTable = ({ onEdit }) => {
   const dispatch = useDispatch();
@@ -14,6 +17,7 @@ const UsersTable = ({ onEdit }) => {
 
   const handleDelete = (index) => {
     dispatch(deleteUser(startIndex + index));
+    toast.success("User Deleted Successfully");
     if (users.length - 1 <= (currentPage - 1) * rowsPerPage) {
       if (currentPage > 1) {
         setCurrentPage(currentPage - 1);
@@ -26,6 +30,14 @@ const UsersTable = ({ onEdit }) => {
     onEdit(startIndex + index);
   };
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState("");
+  const [filterOption, setFilterOption] = useState("");
+
+  const filteredUsers = filterUsers(users, filterOption);
+  const searchedUsers = searchUsers(filteredUsers, searchQuery);
+  const filteredAndSortedUsers = sortUsers(searchedUsers, sortOption);
+
   //pagination
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +46,7 @@ const UsersTable = ({ onEdit }) => {
   // Calculate the index range for the current page
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const paginatedUsers = users.slice(startIndex, endIndex);
+  const paginatedUsers = filteredAndSortedUsers.slice(startIndex, endIndex);
 
   const usersLength = paginatedUsers.length;
   console.log({ usersLength });
@@ -60,13 +72,53 @@ const UsersTable = ({ onEdit }) => {
         <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
           Users List
         </h1>
-        <div className="overflow-x-auto rounded-xl">
-          <Tables
-            users={paginatedUsers}
-            handleDelete={handleDelete}
-            handleEdit={handleEdit}
-            isProfile={false}
-          />
+        <div>
+          <div className="flex items-center justify-between">
+            <input
+              type="text"
+              className="border py-1 px-3 rounded-xl mb-4 min-w-72"
+              placeholder="Search by name or email"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
+            {/* Sorting */}
+            <div className="flex justify-center gap-2">
+              <p className="text-gray-500">Sort by:</p>
+              <select
+                className="border py-1 px-3 rounded-xl mb-4"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="">None</option>
+                <option value="Name">Name</option>
+                <option value="DOB">DOB</option>
+              </select>
+            </div>
+
+            {/* Filtering by country */}
+            <div className="flex justify-center gap-2">
+              <p className="text-gray-500">Filter by Country:</p>
+              <select
+                className="border py-1 px-3 rounded-xl mb-4"
+                value={filterOption}
+                onChange={(e) => setFilterOption(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="Nepal">Nepal</option>
+                <option value="India">India</option>
+                <option value="China">China</option>
+              </select>
+            </div>
+          </div>
+          <div className="overflow-x-auto shadow-lg rounded-xl">
+            <Tables
+              users={paginatedUsers}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+              isProfile={false}
+            />
+          </div>
         </div>
 
         {totalUsers > rowsPerPage && (

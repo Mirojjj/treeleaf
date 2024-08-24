@@ -31,3 +31,32 @@ export const convertToBase64 = (file) => {
     };
   });
 };
+
+//sorting filtering and searching logics
+
+// helpers.js
+
+export const sortUsers = (users, sortOption) => {
+  if (sortOption === "Name") {
+    return users.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortOption === "DOB") {
+    return users.sort((a, b) => new Date(a.dob) - new Date(b.dob));
+  } else {
+    return users;
+  }
+};
+
+export const filterUsers = (users, filterOption) => {
+  if (filterOption === "") {
+    return users;
+  }
+  return users.filter((user) => user.country === filterOption);
+};
+
+export const searchUsers = (users, searchQuery) => {
+  return users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+};

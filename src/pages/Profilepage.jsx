@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Tables from "../components/Tables";
 import { useNavigate } from "react-router-dom";
 import { sortUsers, filterUsers, searchUsers } from "../utils/helper.js"; // Import helper functions
 
 const Profilepage = () => {
-  const dispatch = useDispatch();
   const users = useSelector((state) => state.users.users);
-  const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("");
